@@ -1,0 +1,31 @@
+#include<stdio.h>
+int i = 1;
+void Hanoi(int n, char a, char b, char c)
+{
+
+ if (n == 1)
+ {
+  printf("%2d-(%2d):%c==>%c\n",i++,n,a,b);
+
+ }
+ else
+ {
+  Hanoi(n - 1, a,c,b);
+
+   printf("%2d-(%2d):%c==>%c\n", i++, n, a,b);
+  Hanoi(n - 1, c,b,a);
+
+ }
+
+}
+int main()
+{
+ int n;
+ char a = 'a';
+  char b = 'b';
+ char c = 'c';
+ printf("Please enter the number of discs:");
+ scanf("%d", &n);
+ Hanoi(n, a, b, c);
+ printf("\tTotal:%d\n",--i);
+ return 0;

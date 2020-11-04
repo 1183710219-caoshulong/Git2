@@ -1,0 +1,194 @@
+#include<stdio.h>
+#include<ctype.h>
+ 
+void expand(char s1[], char s2[])
+{                
+    int state = 0;
+    /*
+    5 states 0...4.
+    0 : waiting for the first input character
+    1 : first input character is an alphabet, say 'a'
+    2 : first input character is a digit, say 7
+    3 : first two input characters are an alphabet and '-', ignoring any white spaces in between, e.g. a-
+    4 : first two input characters are a digit and '-', ignoring any white spaces in between, e.g. 7-
+ 
+    Jump between the states 1...4 as new characters are fetched in. Modify s2 accordingly.
+    */
+    int i, j, k;
+    int first;
+    i = j = k = 0;
+    while (1)
+    {                
+        k = 0;
+        switch (state)
+        {                
+        case 0:
+            if (isalpha(s1[i]))
+            {                
+                s2[j++] = s1[i];
+                first = s1[i] + 1;
+                state = 1;
+            }
+            else if (s1[i] == '\0')
+            {                
+                s2[j] = '\0';
+                return;
+            }
+            else if (isdigit(s1[i]))
+            {                
+                state = 2;
+                s2[j++] = s1[i];
+                first = s1[i] + 1;
+            }
+            ++i;
+            break;
+        case 1:
+            if (isalpha(s1[i]))
+            {                
+                first = s1[i] + 1;
+                s2[j++] = s1[i];
+            }
+            else if (isdigit(s1[i]))
+            {                
+                state = 2;
+                s2[j++] = s1[i];
+                first = s1[i] + 1;
+            }
+            else if (s1[i] == '\0')
+            {                
+                s2[j] = '\0';
+                return;
+            }
+            else if (s1[i] == '-')
+            {                
+                state = 3;
+            }
+            ++i;
+            break;
+        case 2:
+            if (isalpha(s1[i]))
+            {                
+                state = 1;
+                s2[j++] = s1[i];
+                first = s1[i] + 1;
+            }
+            else if (isdigit(s1[i]))
+            {                
+                s2[j++] = s1[i];
+                first = s1[i] + 1;
+            }
+            else if (s1[i] == '-')
+            {                
+                state = 4;
+            }
+            else if (s1[i] == '\0')
+            {                
+                s2[j] = '\0';
+                return;
+            }
+            ++i;
+            break;
+        case 3:
+            if ((isalpha(s1[i])) && (s1[i] >= first))
+            {                
+                k = 0;
+                while (first + k <= s1[i])
+                {                
+                    s2[j++] = first + k;
+                    ++k;
+                }
+                first = s1[i] + 1;
+                state = 1;
+            }
+            else if ((isalpha(s1[i])) && (s1[i] < first))
+            {                
+                k = 0;
+                while (first + k <= 'z')
+                {                
+                    s2[j++] = first + k;
+                    ++k;
+                }
+                s2[j++] = s1[i];
+                first = s1[i] + 1;
+                state = 1;
+            }
+            else if (isdigit(s1[i]))
+            {                
+                k = 0;
+                while (first + k <= 'z')
+                {                
+                    s2[j++] = first + k;
+                    ++k;
+                }
+                s2[j++] = s1[i];
+                first = s1[i] + 1;
+                state = 2;
+            }
+            else if (s1[i] == '\0')
+            {                
+                k = 0;
+                while (first + k <= 'z')
+                {                
+                    s2[j++] = first + k;
+                    ++k;
+                }
+                s2[j] = '\0';
+                return;
+            }
+            ++i;
+            break;
+        case 4:
+            if (isalpha(s1[i]))
+            {                
+                state = 1;
+                while (first + k <= '9')
+                {                
+                    s2[j++] = first + k;
+                    ++k;
+                }
+                s2[j++] = s1[i];
+                first = s1[i] + 1;
+            }
+            else if (isdigit(s1[i]) && s1[i] >= first)
+            {                
+                state = 2;
+                while (first + k <= s1[i])
+                {                
+                    s2[j++] = first + k;
+                    ++k;
+                }
+                first = s1[i] + 1;
+            }
+            else if (isdigit(s1[i]) && s1[i] < first)
+            {                
+                state = 2;
+                while (first + k <= s1[i])
+                {                
+                    s2[j++] = first + k;
+                    ++k;
+                }
+                s2[j++] = s1[i];
+                first = s1[i] + 1;
+            }
+            else if (s1[i] == '\0')
+            {                
+                s2[j] = '\0';
+                return;
+            }
+            ++i;
+            break;
+        }
+    }
+}                
+ 
+int main(void)
+{                
+    printf("Please intput the string:\n");
+    char s1[60];
+    scanf("%s", s1);
+    char s2[400];
+    expand(s1, s2);
+    printf("the output is:\n");
+    printf("s1=%s\ns2=%s", s1, s2);
+    return 0;
+}
